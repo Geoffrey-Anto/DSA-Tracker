@@ -29,6 +29,13 @@ type Mutation {
   register(createUserInput: CreateUserInputDTO!): RegisterResponse!
 }
 
+type QList {
+  id: String!
+  isPublic: Boolean!
+  user: User!
+  userId: String!
+}
+
 type Query {
   findAllUsers: [User!]!
   findUser(id: String!): User
@@ -44,4 +51,5 @@ type User {
   email: String!
   id: String!
   name: String!
+  qList: QList
 }

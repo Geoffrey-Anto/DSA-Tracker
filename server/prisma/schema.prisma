@@ -16,4 +16,12 @@ model User {
   password  String
   email     String   @unique
   createdAt DateTime @default(now())
+  qList     QList?
+}
+
+model QList {
+  id       String  @id @default(uuid())
+  user     User?   @relation(fields: [userId], references: [id])
+  userId   String? @unique()
+  isPublic Boolean @default(false)
 }

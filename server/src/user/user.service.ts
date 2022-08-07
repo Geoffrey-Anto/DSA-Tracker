@@ -17,13 +17,20 @@ export class UserService {
   ) {}
 
   async findAll(): Promise<User[]> {
-    return await this.prismaService.user.findMany();
+    return await this.prismaService.user.findMany({
+      include: {
+        qList: true,
+      },
+    });
   }
 
   async findOne(id: string): Promise<User | null> {
     return (await this.prismaService.user.findUnique({
       where: {
         id,
+      },
+      include: {
+        qList: true,
       },
     })) as User | null;
   }
@@ -35,25 +42,37 @@ export class UserService {
     try {
       const hashedPassword = await bcrypt.hash(createUserInput.password, 10);
 
-      const user = (await this.prismaService.user.create({
+      const user = await this.prismaService.user.create({
         data: {
           ...createUserInput,
           password: hashedPassword,
+          qList: {
+            create: {
+              isPublic: false,
+            },
+          },
         },
-      })) as User;
+        select: {
+          createdAt: true,
+          email: true,
+          id: true,
+          name: true,
+          qList: true,
+        },
+      });
 
-      this.signJWT(ctx, user);
+      this.signJWT(ctx, user as User);
 
       return {
         message: null,
-        data: user,
-      } as RegisterResponse;
+        data: user as User,
+      };
     } catch (error: any) {
       if (error.code === 'P2002') {
         return {
           message: 'Email Already Used',
           data: null,
-        } as RegisterResponse;
+        };
       }
     }
     return {
@@ -72,6 +91,9 @@ export class UserService {
       where: {
         email,
       },
+      include: {
+        qList: true,
+      },
     });
 
     if (!user) {
@@ -87,12 +109,7 @@ export class UserService {
       this.signJWT(ctx, user);
       return {
         message: null,
-        data: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          createdAt: user.createdAt,
-        } as User,
+        data: user as User,
       };
     }
 
