@@ -1,3 +1,4 @@
+import { Question } from './../../question/enitity/question.entity';
 import { User } from './../../user/enitity/user.entity';
 import { Field, ObjectType } from '@nestjs/graphql';
 
@@ -14,4 +15,13 @@ export class QList {
 
   @Field(() => String)
   userId?: string;
+
+  @Field(() => [Question], { nullable: true })
+  allQuestions?: Question[];
+
+  @Field(() => [Question], { nullable: true })
+  todoQuestions?: Question[];
+
+  @Field(() => [Question], { nullable: true })
+  favoriteQuestions?: Question[];
 }

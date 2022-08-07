@@ -25,13 +25,17 @@ input LoginUserDto {
 
 type Mutation {
   changeUserName(newName: String!): User
+  changeVisibility(isPublic: Boolean!): Boolean!
   login(LoginUserInput: LoginUserDto!): LoginResponse!
   register(createUserInput: CreateUserInputDTO!): RegisterResponse!
 }
 
 type QList {
+  allQuestions: [Question!]
+  favoriteQuestions: [Question!]
   id: String!
   isPublic: Boolean!
+  todoQuestions: [Question!]
   user: User!
   userId: String!
 }
@@ -39,6 +43,22 @@ type QList {
 type Query {
   findAllUsers: [User!]!
   findUser(id: String!): User
+  getQList: QList!
+  isPublic(id: String!): Boolean!
+}
+
+type Question {
+  allList: QList
+  allListId: String
+  favoriteList: QList
+  favoriteListId: String
+  id: String!
+  isSolved: Boolean!
+  link: String!
+  tags: String!
+  title: String!
+  todoList: QList
+  todoListId: String
 }
 
 type RegisterResponse {

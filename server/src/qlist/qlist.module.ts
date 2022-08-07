@@ -3,6 +3,6 @@ import { QlistResolver } from './qlist.resolver';
 import { QlistService } from './qlist.service';
 
 @Module({
-  providers: [QlistResolver, QlistService]
+  providers: [QlistResolver, QlistService],
 })
 export class QlistModule {}

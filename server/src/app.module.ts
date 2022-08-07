@@ -8,6 +8,7 @@ import { UserModule } from './user/user.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { QlistModule } from './qlist/qlist.module';
+import { QuestionModule } from './question/question.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { QlistModule } from './qlist/qlist.module';
     PrismaModule,
     AuthModule,
     QlistModule,
+    QuestionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
