@@ -1,0 +1,7 @@
+Start implementing server
+
+Create Nest App
+
+Add TypeGraphql and Prisma to the dependencies
+
+-- READ SERVER TODO --
