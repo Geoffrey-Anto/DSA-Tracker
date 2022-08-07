@@ -24,6 +24,7 @@ input LoginUserDto {
 }
 
 type Mutation {
+  changeUserName(newName: String!): User
   login(LoginUserInput: LoginUserDto!): LoginResponse!
   register(createUserInput: CreateUserInputDTO!): RegisterResponse!
 }

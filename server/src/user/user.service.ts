@@ -102,6 +102,31 @@ export class UserService {
     };
   }
 
+  async changeUserName(
+    ctx: GQLContextType,
+    name: string,
+  ): Promise<User | null> {
+    try {
+      const token = ctx.req.cookies['access-token'];
+      if (!token) {
+        return null;
+      }
+      const user = await this.jwtService.verify(token);
+
+      return this.prismaService.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          name,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    return null;
+  }
+
   // SIGN JWT AND SEND TO THE CLIENT
   async signJWT(ctx: GQLContextType, user: User) {
     const jwt = this.jwtService.sign({

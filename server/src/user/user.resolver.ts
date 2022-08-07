@@ -28,7 +28,7 @@ export class UserResolver {
     return this.userService.findOne(id);
   }
 
-  // LOGIN A USER --TODO "IMPLEMENT LOGIN, JWT, COOKIES"
+  // REGISTER A USER
   @Mutation(() => RegisterResponse, {
     name: 'register',
   })
@@ -39,11 +39,26 @@ export class UserResolver {
     return await this.userService.createUser(createUserInput, ctx);
   }
 
-  @Mutation(() => LoginResponse, { name: 'login' })
+  // LOGIN A USER
+  @Mutation(() => LoginResponse, {
+    name: 'login',
+  })
   async login(
     @Args('LoginUserInput') loginUserInput: LoginUserDto,
     @Context() ctx: GQLContextType,
   ): Promise<LoginResponse> {
     return await this.userService.login(loginUserInput, ctx);
+  }
+
+  // CHANGE NAME OF USER
+  @Mutation(() => User, {
+    name: 'changeUserName',
+    nullable: true,
+  })
+  async changeUserName(
+    @Context() ctx: GQLContextType,
+    @Args('newName') name: string,
+  ): Promise<User | null> {
+    return this.userService.changeUserName(ctx, name);
   }
 }
