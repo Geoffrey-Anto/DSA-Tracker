@@ -1,3 +1,4 @@
+import { JwtAuthGuard } from './../auth/jwt-auth.guard';
 import { LoginUserDto } from './dto/login-user-input.dto';
 import { CreateUserInputDTO } from './dto/create-user-input.dto';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
@@ -6,6 +7,7 @@ import { UserService } from './user.service';
 import { RegisterResponse } from './response/register.response';
 import { GQLContextType } from 'types';
 import { LoginResponse } from './response/login.response';
+import { UseGuards } from '@nestjs/common';
 
 @Resolver()
 export class UserResolver {
@@ -15,6 +17,7 @@ export class UserResolver {
   @Query(() => [User], {
     name: 'findAllUsers',
   })
+  @UseGuards(JwtAuthGuard)
   async findAll(): Promise<User[]> {
     return this.userService.findAll();
   }
@@ -24,6 +27,7 @@ export class UserResolver {
     name: 'findUser',
     nullable: true,
   })
+  @UseGuards(JwtAuthGuard)
   async findOne(@Args('id') id: string): Promise<User | null> {
     return this.userService.findOne(id);
   }

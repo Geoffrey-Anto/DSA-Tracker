@@ -135,6 +135,8 @@ export class UserService {
       email: user.email,
     });
     ctx.res.cookie('access-token', jwt);
+    // Send the jwt to the client as authorization header
+    ctx.res.set('Authorization', `Bearer ${jwt}`);
     return jwt;
   }
 }
