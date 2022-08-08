@@ -106,7 +106,7 @@ export class UserService {
     const isValid = await bcrypt.compare(password, user.password);
 
     if (isValid) {
-      this.signJWT(ctx, user);
+      await this.signJWT(ctx, user);
       return {
         message: null,
         data: user as User,
@@ -153,8 +153,6 @@ export class UserService {
       qListId: user.qList?.id,
     });
     ctx.res.cookie('access-token', jwt);
-    // Send the jwt to the client as authorization header
-    ctx.res.set('Authorization', `Bearer ${jwt}`);
     return jwt;
   }
 }
