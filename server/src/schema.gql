@@ -2,6 +2,13 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input CreateQuestionInputDTO {
+  isSolved: Boolean!
+  link: String!
+  tags: String!
+  title: String!
+}
+
 input CreateUserInputDTO {
   email: String!
   name: String!
@@ -24,10 +31,14 @@ input LoginUserDto {
 }
 
 type Mutation {
+  addQuestion(createQuestionInput: CreateQuestionInputDTO!): Question!
   changeUserName(newName: String!): User
   changeVisibility(isPublic: Boolean!): Boolean!
+  deleteQuestion(questionId: String!): Boolean!
   login(LoginUserInput: LoginUserDto!): LoginResponse!
   register(createUserInput: CreateUserInputDTO!): RegisterResponse!
+  toggleFavoriteQuestion(questionId: String!): Boolean!
+  toggleTodoQuestion(questionId: String!): Boolean!
 }
 
 type QList {

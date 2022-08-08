@@ -15,7 +15,7 @@ export class Question {
   @Field()
   tags: string;
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, { defaultValue: false })
   isSolved: boolean;
 
   @Field(() => QList, { nullable: true })

@@ -150,6 +150,7 @@ export class UserService {
       id: user.id,
       name: user.name,
       email: user.email,
+      qListId: user.qList?.id,
     });
     ctx.res.cookie('access-token', jwt);
     // Send the jwt to the client as authorization header

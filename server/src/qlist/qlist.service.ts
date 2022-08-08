@@ -1,7 +1,8 @@
+import { Question } from './../question/enitity/question.entity';
+import { CreateQuestionInputDTO } from './dto/create-question-input.dto';
 import { PrismaService } from './../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { QList } from './enitity/qlist.enitity';
-// import { GuardContextType } from 'types';
 
 @Injectable()
 export class QlistService {
@@ -30,6 +31,9 @@ export class QlistService {
         isPublic: true,
       },
     });
+    if (!qlist) {
+      return false;
+    }
     return qlist.isPublic;
   }
 
@@ -48,5 +52,93 @@ export class QlistService {
       console.log(e);
       return false;
     }
+  }
+
+  async addQuestion(
+    context: any,
+    createQuestionInput: CreateQuestionInputDTO,
+  ): Promise<Question> {
+    const qListId = context.req.user.qListId;
+    const newQuestion = await this.prismaService.question.create({
+      data: {
+        title: createQuestionInput.title,
+        link: createQuestionInput.link,
+        tags: createQuestionInput.tags,
+        isSolved: false,
+        allListId: qListId,
+      },
+    });
+    return newQuestion;
+  }
+
+  async toggleTodoQuestion(context: any, questionId: string): Promise<boolean> {
+    const qListId = context.req.user.qListId;
+    if (!qListId) return false;
+    const question = await this.prismaService.question.findUnique({
+      where: {
+        id: questionId,
+      },
+      select: {
+        todoListId: true,
+      },
+    });
+    if (!question) return false;
+    if (question.todoListId === null) {
+      await this.prismaService.question.update({
+        where: {
+          id: questionId,
+        },
+        data: {
+          todoListId: qListId,
+        },
+      });
+    } else {
+      await this.prismaService.question.update({
+        where: {
+          id: questionId,
+        },
+        data: {
+          todoListId: null,
+        },
+      });
+    }
+    return true;
+  }
+
+  async toggleFavoriteQuestion(
+    context: any,
+    questionId: string,
+  ): Promise<boolean> {
+    const qListId = context.req.user.qListId;
+    if (!qListId) return false;
+    const question = await this.prismaService.question.findUnique({
+      where: {
+        id: questionId,
+      },
+      select: {
+        favoriteListId: true,
+      },
+    });
+    if (!question) return false;
+    if (question.favoriteListId === null) {
+      await this.prismaService.question.update({
+        where: {
+          id: questionId,
+        },
+        data: {
+          favoriteListId: qListId,
+        },
+      });
+    } else {
+      await this.prismaService.question.update({
+        where: {
+          id: questionId,
+        },
+        data: {
+          favoriteListId: null,
+        },
+      });
+    }
+    return true;
   }
 }
