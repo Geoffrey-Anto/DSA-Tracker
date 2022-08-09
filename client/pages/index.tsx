@@ -7,6 +7,8 @@ import Welcome from "../components/Welcome";
 import { addApolloState, initializeApollo } from "../lib/apolloClient";
 import { GETQLIST, GETQLIST_Type } from "../graphql/query/getQList";
 import { useQuery } from "@apollo/client";
+import Stats from "../components/Stats";
+import { getSolvedQuestionCount } from "../utils/getSolvedQuestionCount";
 
 interface Props {
   decodedUser: JwtPayloadType;
@@ -21,7 +23,16 @@ const Home: NextPage<Props> = ({ decodedUser }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar user={decodedUser} />
-      <Welcome name={decodedUser.name} />
+      <div className="flex items-start mt-2 justify-center sm:justify-between flex-wrap">
+        <Welcome name={decodedUser.name} />
+        <Stats
+          tackingData={{
+            All: QListData?.getQList.allQuestions.length as number,
+            Todo: QListData?.getQList.todoQuestions.length as number,
+            Solved: getSolvedQuestionCount(QListData?.getQList.allQuestions),
+          }}
+        />
+      </div>
     </div>
   );
 };

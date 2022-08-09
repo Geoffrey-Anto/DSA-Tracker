@@ -50,3 +50,11 @@ export interface RegisterMutationResponse {
     };
   };
 }
+
+export interface QuestionType {
+  id: string;
+  title: string;
+  link: string;
+  tags: string;
+  isSolved: boolean;
+}
