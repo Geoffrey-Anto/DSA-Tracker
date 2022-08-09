@@ -1,10 +1,13 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { useApollo } from "../lib/apolloClient";
-import { ApolloProvider } from "@apollo/client";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const apolloClient = useApollo(pageProps);
+  const apolloClient = new ApolloClient({
+    uri: process.env.NEXT_PUBLIC_GQL_API_URL || " ",
+    cache: new InMemoryCache(),
+    credentials: "include",
+  });
 
   return (
     <ApolloProvider client={apolloClient}>

@@ -65,4 +65,10 @@ export class UserResolver {
   ): Promise<User | null> {
     return this.userService.changeUserName(ctx, name);
   }
+
+  @Mutation(() => Boolean)
+  @UseGuards(JwtAuthGuard)
+  async signOut(@Context() ctx: GQLContextType): Promise<boolean> {
+    return this.userService.signOut(ctx);
+  }
 }

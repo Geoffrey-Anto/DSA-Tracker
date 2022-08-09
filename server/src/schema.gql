@@ -37,6 +37,7 @@ type Mutation {
   deleteQuestion(questionId: String!): Boolean!
   login(LoginUserInput: LoginUserDto!): LoginResponse!
   register(createUserInput: CreateUserInputDTO!): RegisterResponse!
+  signOut: Boolean!
   toggleFavoriteQuestion(questionId: String!): Boolean!
   toggleTodoQuestion(questionId: String!): Boolean!
 }

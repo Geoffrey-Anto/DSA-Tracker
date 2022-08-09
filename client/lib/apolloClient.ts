@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import {
   ApolloClient,
-  HttpLink,
   InMemoryCache,
   NormalizedCacheObject,
 } from "@apollo/client";
@@ -14,12 +13,11 @@ export const APOLLO_STATE_PROP_NAME = "__APOLLO_STATE__";
 let apolloClient: ApolloClient<NormalizedCacheObject> | undefined;
 
 function createApolloClient() {
+  console.log(process.env.NEXT_PUBLIC_GQL_API_URL);
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
-    link: new HttpLink({
-      uri: process.env.NEXT_PUBLIC_GQL_API_URL, // Server URL (must be absolute)
-      credentials: "same-origin", // Additional fetch() options like `credentials` or `headers`
-    }),
+    uri: process.env.NEXT_PUBLIC_GQL_API_URL,
+    credentials: "include",
     cache: new InMemoryCache({
       // typePolicies is not required to use Apollo with Next.js - only for doing pagination.
       typePolicies: {

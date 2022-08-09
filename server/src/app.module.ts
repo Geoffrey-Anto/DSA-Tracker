@@ -18,6 +18,10 @@ import { QuestionModule } from './question/question.module';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
       context: ({ res, req }) => ({ res, req }),
+      cors: {
+        origin: process.env.CLIENT_URL_DEV,
+        credentials: true,
+      },
     }),
     PrismaModule,
     AuthModule,

@@ -18,3 +18,20 @@ export interface UserSignUpInputType {
   first_name: "";
   last_name: "";
 }
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: string;
+  qList: any;
+}
+
+export interface LoginMutationResponse {
+  data?: {
+    login: {
+      data?: User;
+      message?: string;
+    };
+  };
+}

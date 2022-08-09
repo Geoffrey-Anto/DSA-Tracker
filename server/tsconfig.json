@@ -21,6 +21,7 @@
     "strict": true,
     "noUnusedParameters": true,
     "noUnusedLocals": true,
-    "strictFunctionTypes": true
+    "strictFunctionTypes": true,
+    "esModuleInterop": true
   }
 }

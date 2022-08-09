@@ -155,4 +155,17 @@ export class UserService {
     ctx.res.cookie('access-token', jwt);
     return jwt;
   }
+
+  async signOut(ctx: GQLContextType): Promise<boolean> {
+    const user = ctx.req.user;
+    const token = ctx.req.cookies['access-token'];
+    if (!token) {
+      return false;
+    }
+    if (!user) {
+      return false;
+    }
+    ctx.res.clearCookie('access-token');
+    return true;
+  }
 }
