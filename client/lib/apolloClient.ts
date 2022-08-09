@@ -4,7 +4,6 @@ import {
   InMemoryCache,
   NormalizedCacheObject,
 } from "@apollo/client";
-import { relayStylePagination } from "@apollo/client/utilities";
 import merge from "deepmerge";
 import isEqual from "lodash/isEqual";
 
@@ -13,21 +12,11 @@ export const APOLLO_STATE_PROP_NAME = "__APOLLO_STATE__";
 let apolloClient: ApolloClient<NormalizedCacheObject> | undefined;
 
 function createApolloClient() {
-  console.log(process.env.NEXT_PUBLIC_GQL_API_URL);
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
     uri: process.env.NEXT_PUBLIC_GQL_API_URL,
     credentials: "include",
-    cache: new InMemoryCache({
-      // typePolicies is not required to use Apollo with Next.js - only for doing pagination.
-      typePolicies: {
-        Query: {
-          fields: {
-            posts: relayStylePagination(),
-          },
-        },
-      },
-    }),
+    cache: new InMemoryCache(),
   });
 }
 

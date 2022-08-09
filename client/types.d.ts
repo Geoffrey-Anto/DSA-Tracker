@@ -35,3 +35,18 @@ export interface LoginMutationResponse {
     };
   };
 }
+
+export interface SignUpMutationInputType {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export interface RegisterMutationResponse {
+  data?: {
+    register: {
+      data?: User;
+      message?: string;
+    };
+  };
+}

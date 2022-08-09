@@ -1,10 +1,16 @@
 import { GetServerSideProps, NextPage } from "next";
 import React, { useEffect } from "react";
 import LoginForm from "../../components/LoginForm";
-import { LoginMutationResponse, UserLoginInputType } from "../../types";
+import {
+  JwtPayloadType,
+  LoginMutationResponse,
+  UserLoginInputType,
+} from "../../types";
 import toast, { Toaster } from "react-hot-toast";
 import { useMutation } from "@apollo/client";
 import { LOGIN } from "../../graphql/mutation/login";
+import jwt from "jsonwebtoken";
+import Head from "next/head";
 
 interface Props {
   message?: string;
@@ -37,6 +43,12 @@ const Login: NextPage<Props> = ({ message }) => {
             password: "",
           });
           onLoginSuccessHandler();
+        } else if (!loginResponse.login.data && loginResponse.login.message) {
+          const message = loginResponse.login.message;
+          toast.error(message, {
+            position: "top-center",
+            duration: 1500,
+          });
         }
       }
     } catch (e) {
@@ -57,6 +69,9 @@ const Login: NextPage<Props> = ({ message }) => {
 
   return (
     <>
+      <Head>
+        <title>DSA-Tracker</title>
+      </Head>
       <Toaster />
       <div className="bg-gray-800  text-white flex h-screen flex-1 flex-col items-center justify-around font-sans">
         <div className="w-full h-2/3 flex flex-col items-center justify-evenly">
@@ -72,6 +87,30 @@ const Login: NextPage<Props> = ({ message }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const token = context.req.cookies["access-token"];
+  if (!token) {
+    return {
+      props: {},
+    };
+  }
+  try {
+    const jwtResponse = jwt.verify(
+      token,
+      process.env.JWT_SECRET as string
+    ) as JwtPayloadType;
+    if (jwtResponse.id !== undefined) {
+      return {
+        redirect: {
+          destination: "/",
+          permanent: false,
+        },
+      };
+    }
+  } catch (error) {
+    return {
+      props: {},
+    };
+  }
   const q = context.query;
   if (q.session === "expired") {
     return {

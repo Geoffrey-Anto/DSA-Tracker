@@ -33,7 +33,7 @@ const LoginForm: React.FC<Props> = ({ onSubmit, state }) => {
       </button>
       <p className="text-sm mt-2">
         Don't have an account?{" "}
-        <Link href={"/auth/Signup"}>
+        <Link href={"/auth/Register"}>
           <span className="text-purple cursor-pointer">Sign Up</span>
         </Link>
       </p>

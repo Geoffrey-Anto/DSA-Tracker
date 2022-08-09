@@ -3,12 +3,17 @@ import Head from "next/head";
 import * as jwt from "jsonwebtoken";
 import { JwtPayloadType } from "../types";
 import Navbar from "../components/Navbar";
+import Welcome from "../components/Welcome";
+import { addApolloState, initializeApollo } from "../lib/apolloClient";
+import { GETQLIST, GETQLIST_Type } from "../graphql/query/getQList";
+import { useQuery } from "@apollo/client";
 
 interface Props {
   decodedUser: JwtPayloadType;
 }
 
 const Home: NextPage<Props> = ({ decodedUser }) => {
+  const { data: QListData } = useQuery<GETQLIST_Type>(GETQLIST);
   return (
     <div className="min-h-screen w-full bg-gray-800 text-white">
       <Head>
@@ -16,6 +21,7 @@ const Home: NextPage<Props> = ({ decodedUser }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar user={decodedUser} />
+      <Welcome name={decodedUser.name} />
     </div>
   );
 };
@@ -25,7 +31,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (!token) {
     return {
       redirect: {
-        destination: "/auth/Signup",
+        destination: "/auth/Register",
       },
       props: {},
     };
@@ -44,11 +50,28 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   }
-  return {
+
+  // Get QList
+  const apolloClient = initializeApollo();
+
+  try {
+    await apolloClient.query({
+      query: GETQLIST,
+      context: {
+        headers: {
+          cookie: token,
+        },
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+
+  return addApolloState(apolloClient, {
     props: {
       decodedUser: decoded,
     },
-  };
+  });
 };
 
 export default Home;
