@@ -13,7 +13,6 @@ interface Props {
 }
 
 const Stats: React.FC<Props> = ({ tackingData: { Solved, All, Todo } }) => {
-  console.log(Solved, All, Todo);
   return (
     <div className="mr-4 h-40 w-40 md:h-48 md:w-48 lg:mr-12">
       <Pie

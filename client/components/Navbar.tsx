@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { JwtPayloadType } from "../types";
 import { UserIcon } from "@heroicons/react/solid";
 import { useMutation } from "@apollo/client";
@@ -24,7 +24,7 @@ const Navbar: React.FC<Props> = ({ user }) => {
     } catch (error) {}
   };
   return (
-    <div className="w-full h-20 bg-slate-900 flex flex-row items-center justify-between p-4">
+    <div className="w-full h-20 bg-slate-900 flex flex-row items-center justify-between p-4 pr-6">
       <p className="text-2xl">DSA - Tracker</p>
       <div className="flex items-center justify-between w-2/3 sm:w-1/2 md:w-1/2 lg:w-2/5">
         <p className="cursor-pointer hover:text-purple hover:border-b-2 hover:border-purple ease-linear duration-100">
@@ -53,4 +53,4 @@ const Navbar: React.FC<Props> = ({ user }) => {
   );
 };
 
-export default Navbar;
+export default memo(Navbar);

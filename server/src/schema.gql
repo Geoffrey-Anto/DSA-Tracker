@@ -39,6 +39,7 @@ type Mutation {
   register(createUserInput: CreateUserInputDTO!): RegisterResponse!
   signOut: Boolean!
   toggleFavoriteQuestion(questionId: String!): Boolean!
+  toggleSolved(questionId: String!): Boolean!
   toggleTodoQuestion(questionId: String!): Boolean!
 }
 

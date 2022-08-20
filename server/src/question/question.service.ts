@@ -21,4 +21,34 @@ export class QuestionService {
       return false;
     }
   }
+
+  async toggleSolved(id: string) {
+    try {
+      const ques = await this.prismaService.question.findUnique({
+        where: {
+          id: id,
+        },
+        select: {
+          isSolved: true,
+        },
+      });
+      if (!ques) {
+        return false;
+      }
+      const isSolved = ques.isSolved;
+      await this.prismaService.question.update({
+        where: {
+          id: id,
+        },
+        data: {
+          isSolved: !isSolved,
+        },
+      });
+
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
 }

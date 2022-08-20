@@ -12,4 +12,10 @@ export class QuestionResolver {
   async deleteQuestion(@Args('questionId') id: string): Promise<boolean> {
     return this.questionService.deleteQuestion(id);
   }
+
+  @Mutation(() => Boolean)
+  @UseGuards(JwtAuthGuard)
+  async toggleSolved(@Args('questionId') id: string) {
+    return this.questionService.toggleSolved(id);
+  }
 }

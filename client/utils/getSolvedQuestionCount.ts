@@ -9,6 +9,5 @@ export function getSolvedQuestionCount(
       num++;
     }
   });
-  console.log(num);
   return num;
 }

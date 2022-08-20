@@ -14,7 +14,11 @@ export class QlistService {
         userId,
       },
       include: {
-        allQuestions: true,
+        allQuestions: {
+          orderBy: {
+            id: 'desc',
+          },
+        },
         favoriteQuestions: true,
         todoQuestions: true,
         // user: true,

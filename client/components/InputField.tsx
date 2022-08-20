@@ -50,7 +50,7 @@ const InputField: React.FC<Props> = ({ title, isSmall, state }) => {
       <input
         value={state.data[title.toLowerCase()]}
         required
-        type="text"
+        type={title === "Password" ? "password" : "text"}
         placeholder={`Enter your ${title.toLowerCase()}`}
         className="text-gray-800 text-sm w-60 lg:w-80 xl:w-96 p-2 border-gray-300 border-2 rounded-md"
         onChange={onChangeHandler}

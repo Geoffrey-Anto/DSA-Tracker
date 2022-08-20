@@ -39,7 +39,6 @@ const SignUp = () => {
       const registerUserInput = (await registerUser({
         variables: SignUpFormData,
       })) as RegisterMutationResponse;
-      console.log(registerUserInput);
       if (
         registerUserInput.data &&
         registerUserInput.data.register &&
@@ -103,6 +102,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           destination: "/",
           permanent: false,
         },
+        props: {},
       };
     }
   } catch (error) {
