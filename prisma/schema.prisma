@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["jsonProtocol"]
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+enum Complexity {
+    EASY
+    MEDIUM
+    HARD
+}
+
+model User {
+    id       String @id @default(cuid())
+    email    String @unique
+    password String
+    name     String
+
+    QuestionBook  QuestionBook[]
+}
+
+model QuestionBook {
+    id          String  @id @default(cuid())
+    title       String
+    description String?
+
+    User User @relation(fields: [userId], references: [id])
+    userId String
+
+    questions Question[]
+}
+
+model Question {
+    id          String  @id @unique @default(cuid())
+    title       String
+    description String?
+
+    complexity Complexity @default(EASY)
+
+    completed Boolean @default(false)
+
+    link String
+
+    favorite Boolean @default(false)
+
+    QuestionBook   QuestionBook? @relation(fields: [questionBookId], references: [id])
+    questionBookId String?
+}
