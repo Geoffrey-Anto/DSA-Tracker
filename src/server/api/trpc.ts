@@ -55,9 +55,11 @@ export const createTRPCContext = (_opts: CreateNextContextOptions) => {
  * ZodErrors so that you get typesafety on the frontend if your procedure fails due to validation
  * errors on the backend.
  */
-import { initTRPC } from "@trpc/server";
+import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import * as jwt from "jsonwebtoken";
+import { env } from "~/env.mjs";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -95,3 +97,45 @@ export const createTRPCRouter = t.router;
  * are logged in.
  */
 export const publicProcedure = t.procedure;
+
+// authenticated procedure
+
+export const isAuthed = t.middleware((opts) => {
+  const {
+    ctx: { req },
+  } = opts;
+
+  const cookies = req.cookies;
+
+  const { access_token, refresh_token } = cookies;
+
+  if (!access_token || !refresh_token) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "You are not authorized to access this resource",
+    });
+  }
+
+  let userId;
+
+  try {
+    userId = jwt.verify(access_token, env.SECRET) as {
+      id: string;
+    };
+  } catch (e) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "You are not authorized to access this resource",
+    });
+  }
+
+  const id = userId.id;
+
+  return opts.next({
+    ctx: {
+      userId: id,
+    },
+  });
+});
+
+export const authedProcedure = t.procedure.use(isAuthed);

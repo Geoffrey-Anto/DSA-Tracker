@@ -1,18 +1,16 @@
-import { User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { z } from "zod";
-
+import bcrypt from "bcrypt";
+import * as jwt from "jsonwebtoken";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { env } from "~/env.mjs";
+import { loginInputSchema, registerInputSchema } from "~/schema/auth";
 
 export const authRouter = createTRPCRouter({
   register: publicProcedure
-    .input(
-      z.object({
-        email: z.string().email("Invalid email"),
-        password: z.string().min(8, "Password must be at least 8 characters"),
-        name: z.string(),
-      })
-    )
+    .meta({
+      description: "Register a new user",
+    })
+    .input(registerInputSchema)
     .mutation(async ({ input, ctx: { prisma } }) => {
       const user = await prisma.user.findFirst({
         where: {
@@ -20,8 +18,8 @@ export const authRouter = createTRPCRouter({
         },
       });
 
-      if (!user) {
-        return new TRPCError({
+      if (user) {
+        throw new TRPCError({
           code: "CONFLICT",
           message: "Email already exists, please login",
         });
@@ -29,11 +27,22 @@ export const authRouter = createTRPCRouter({
 
       const { email, name, password } = input;
 
+      const hashedPassword = await bcrypt.hash(password, 12);
+
       const newUser = await prisma.user.create({
         data: {
           email,
           name,
-          password,
+          password: hashedPassword,
+          QuestionBook: {
+            create: {},
+          },
+        },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          QuestionBook: true,
         },
       });
 
@@ -41,40 +50,59 @@ export const authRouter = createTRPCRouter({
     }),
 
   login: publicProcedure
-    .input(
-      z.object({
-        email: z.string().email("Invalid email"),
-        password: z.string().min(8, "Password must be at least 8 characters"),
-      })
-    )
-    .mutation(async ({ input, ctx: { prisma,res } }) => {
-
+    .input(loginInputSchema)
+    .mutation(async ({ input, ctx: { prisma, res } }) => {
       const user = await prisma.user.findFirst({
         where: {
           email: input.email,
         },
+        include: {
+          QuestionBook: true,
+        },
       });
 
       if (!user) {
-        return new TRPCError({
+        throw new TRPCError({
           code: "NOT_FOUND",
-          message: "User not found, Please register",
+          message: "Please register first",
         });
       }
 
       const { password } = input;
 
-      const {password: DBPassword} = user;
+      const { password: DBPassword } = user;
 
-      if(password !== DBPassword){
-        return new TRPCError({
+      const isPasswordValid = await bcrypt.compare(password, DBPassword);
+
+      if (!isPasswordValid) {
+        throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Invalid password",
         });
       }
 
-      res.setHeader("Set-Cookie", `token=${user.id}; path=/; httponly`)
+      const access_token = jwt.sign({ id: user.id }, env.SECRET, {
+        expiresIn: "3h",
+      });
 
-      return user;
+      const refresh_token = jwt.sign({ id: user.id }, env.SECRET, {
+        expiresIn: "7d",
+      });
+
+      const h3 = 3 * 60 * 60;
+
+      const d7 = 7 * 24 * 60 * 60;
+
+      res.setHeader("set-cookie", [
+        `access_token=${access_token}; Path=/;max-age=${h3};httpOnly=true;SameSite=Strict;Secure=true;`,
+        `refresh_token=${refresh_token}; Path=/;max-age=${d7};httpOnly=true;SameSite=Strict;Secure=true;`,
+      ]);
+
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        QuestionBook: user.QuestionBook,
+      };
     }),
 });

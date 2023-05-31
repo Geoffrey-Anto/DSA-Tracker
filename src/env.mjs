@@ -9,6 +9,8 @@ export const env = createEnv({
   server: {
     DATABASE_URL: z.string().url(),
     NODE_ENV: z.enum(["development", "test", "production"]),
+    PANEL_URL: z.string().url(),
+    SECRET: z.string().min(16),
   },
 
   /**
@@ -28,5 +30,7 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+    PANEL_URL: process.env.PANEL_URL,
+    SECRET: process.env.SECRET,
   },
 });
